@@ -3,6 +3,7 @@
 #include <string>
 #include <map>
 #include <queue>
+#include <math.h>
 using namespace std;
 int main() {
     char c; //the character being read from the file
@@ -12,8 +13,8 @@ int main() {
     map<char, int> charCounter; //map used to count nucleotide frequency
     queue<char> window; // the sliding window of nucleotides that is being examined for C and G
 
-    ifstream geneFile("C:/Users/jeffp/CLionProjects/HPC1/Human_chromosome-1.fasta"); //input file stream
-    ofstream output("C:/Users/jeffp/CLionProjects/HPC1/output.txt"); //output file stream
+    ifstream geneFile("C:/Users/jeffp/CLionProjects/HPC1/Human_chromosome-1_PARK7.fasta"); //input file stream
+    ofstream output("C:/Users/jeffp/CLionProjects/HPC1/output_park7.txt"); //output file stream
 
     output << "C and G combined frequency > 75% windows:\n"; //write a title for the window table
 
@@ -26,13 +27,13 @@ int main() {
                 cgPercent += 0.2; //since 1/500 = 0.2%, add that
             }
             if (i > 500) { //once window has filled, begin removing elements at the head
-                if (window.front() == 'C' || window.front() == 'G') { //if the character is C or G, decrement CG percentage tracker
+                if (window.front() == 'C' || window.front() == 'G') { //decrement CG percentage tracker if needed
                     cgPercent -= 0.2;
                 }
                 window.pop();
             }
-            if (cgPercent > 75) { //if the window contains >75% CG, write it to output
-                output << i - 500 << ", " << i << "\n";
+            if (cgPercent > 75) { //if the window contains > 75% CG, write it to output
+                output << i - 500 << ", " << ceilf(cgPercent * 100) / 100 << "\n";
             }
         }
         geneFile.close();

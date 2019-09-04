@@ -9,12 +9,14 @@ int main() {
     char c; //the character being read from the file
     long i = 0; //tracks number of characters read in to trigger window
     float cgPercent = 0; //the percent of C and G within the window
+    long maxCgIndex = 0; //the index of the window with the highest CG%
+    float maxCgPercent = 0; //the CG% of the window with the highest CG%
 
     map<char, int> charCounter; //map used to count nucleotide frequency
     queue<char> window; // the sliding window of nucleotides that is being examined for C and G
 
-    ifstream geneFile("C:/Users/jeffp/CLionProjects/HPC1/Human_chromosome-1_PARK7.fasta"); //input file stream
-    ofstream output("C:/Users/jeffp/CLionProjects/HPC1/output_park7.txt"); //output file stream
+    ifstream geneFile("C:/Users/jeffp/CLionProjects/HPC1/Human_chromosome-1.fasta"); //input file stream
+    ofstream output("C:/Users/jeffp/CLionProjects/HPC1/output_h1.txt"); //output file stream
 
     output << "C and G combined frequency > 75% windows:\n"; //write a title for the window table
 
@@ -34,6 +36,10 @@ int main() {
             }
             if (cgPercent > 75) { //if the window contains > 75% CG, write it to output
                 output << i - 500 << ", " << ceilf(cgPercent * 100) / 100 << "\n";
+                if (cgPercent > maxCgPercent) { //check to see if this is the new max and handle
+                    maxCgPercent = cgPercent;
+                    maxCgIndex = i - 500;
+                }
             }
         }
         geneFile.close();
@@ -41,6 +47,8 @@ int main() {
     else {
         cout << "Unable to open file";
     }
+
+    output << "\nMax CG% window: " << maxCgIndex << ", " << maxCgPercent << "%\n";
 
     //calculate the frequency of each nucleotide, excluding unknowns, and write to output
     float totalNuc = charCounter['A'] + charCounter['T'] + charCounter['C'] + charCounter['G'];
